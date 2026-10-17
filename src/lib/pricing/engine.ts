@@ -9,7 +9,7 @@ import {
   RANGE_SPREAD,
   locationByKey,
   type DivisionKey,
-} from "./quote-config";
+} from "../quote-config";
 
 export interface PricingLineItem {
   description: string;

@@ -114,7 +114,7 @@ export const getRecentRequestsFn = createServerFn({ method: "GET" }).handler(asy
  * PRD Section 4.3 & 9.3: Quotation draft creation & approval workflow
  */
 export const updateQuotationStatusFn = createServerFn({ method: "POST" })
-  .inputValidator((data: unknown) =>
+  .validator((data: unknown) =>
     z
       .object({
         quotationId: z.string(),
@@ -143,7 +143,7 @@ export const updateQuotationStatusFn = createServerFn({ method: "POST" })
  * PRD Section 8.1: Track request status by Reference (Guest & Customer Lookup)
  */
 export const lookupRequestStatusFn = createServerFn({ method: "POST" })
-  .inputValidator((data: unknown) =>
+  .validator((data: unknown) =>
     z.object({ reference: z.string().trim().min(3) }).parse(data),
   )
   .handler(async ({ data }) => {

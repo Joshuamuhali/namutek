@@ -37,7 +37,7 @@ function generateReference(): string {
  * Server function to calculate authoritative estimate snapshot (PRD 5.1 & 8.1)
  */
 export const calculateEstimateFn = createServerFn({ method: "POST" })
-  .inputValidator((data: unknown) => pricingInputSchema.parse(data))
+  .validator((data: unknown) => pricingInputSchema.parse(data))
   .handler(async ({ data }) => {
     return calculateAuthoritativePrice(data);
   });
@@ -46,7 +46,7 @@ export const calculateEstimateFn = createServerFn({ method: "POST" })
  * Server function to submit a structured service request with server pricing (PRD 8.1)
  */
 export const submitServiceRequestFn = createServerFn({ method: "POST" })
-  .inputValidator((data: unknown) => requestInputSchema.parse(data))
+  .validator((data: unknown) => requestInputSchema.parse(data))
   .handler(async ({ data }) => {
     const supabase = getSupabaseClient();
     const reference = generateReference();
@@ -131,7 +131,7 @@ export const submitServiceRequestFn = createServerFn({ method: "POST" })
  * Backward compatible export for existing components
  */
 export const submitQuoteRequest = createServerFn({ method: "POST" })
-  .inputValidator((data: any) => data)
+  .validator((data: any) => data)
   .handler(async ({ data }) => {
     return submitServiceRequestFn({
       data: {
