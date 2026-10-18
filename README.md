@@ -217,27 +217,14 @@ com
 +260 966 445513 +260 976 699145
 
 
-lets sue this to build a website
-
-This project was built with [Lovable](https://lovable.dev).
-
-**Live app**: https://namuteklogistics.lovable.app
-
-## Build with Lovable
-
-Continue developing this project in the [Lovable editor](https://lovable.dev/projects/f2665a46-d0f0-451f-b857-fd78dac5a5f2).
-
-- **Ship faster**: describe what you want to build and Lovable handles the code.
-- **Stay in sync**: every change made in Lovable is committed straight to this repository.
-- **Full ownership**: this code is yours. Push to `main` on GitHub and your changes sync back into Lovable, ready for your next prompt.
-
 ## Development
 
-Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
+Install the locked dependencies and start the local development server:
 
 ```sh
-git clone <this-repository-url>
-cd <repository-name>
-npm i
+npm ci
 npm run dev
 ```
+
+Create a production build with `npm run build`. Vercel deployments use the Nitro
+Vercel preset configured in `vite.config.ts`.

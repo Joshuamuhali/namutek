@@ -7,13 +7,11 @@ import {
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
-import { useEffect, useState, type ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
-import { reportLovableError } from "../lib/lovable-error-reporting";
 import { SiteStructuredData } from "@/components/StructuredData";
 import { PHONES } from "@/components/shared";
-import logoAsset from "@/assets/namutek-logo.png.asset.json";
 import { DESIGNER, SITE_ORIGIN } from "@/lib/site-metadata";
 
 const NAV = [
@@ -21,8 +19,6 @@ const NAV = [
   { to: "/services", label: "Services" },
   { to: "/fleet", label: "Fleet & Sectors" },
   { to: "/about", label: "About" },
-  { to: "/track", label: "Track Request" },
-  { to: "/admin", label: "Operations" },
   { to: "/contact", label: "Contact" },
 ] as const;
 
@@ -48,12 +44,9 @@ function NotFoundComponent() {
   );
 }
 
-function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
+function ErrorComponent({ error, reset }: { error: unknown; reset: () => void }) {
   console.error(error);
   const router = useRouter();
-  useEffect(() => {
-    reportLovableError(error, { boundary: "tanstack_root_error_component" });
-  }, [error]);
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
@@ -94,11 +87,9 @@ function Header() {
       <div className="mx-auto flex h-[4.25rem] max-w-6xl items-center justify-between gap-4 px-4">
         <Link to="/" className="flex items-center" aria-label="Namutek Logistics home">
           <img
-            src={logoAsset.url}
+            src="/namutek-logo.png"
             alt="Namutek Logistics Limited"
-            className="h-10 w-auto"
-            width={220}
-            height={80}
+            className="h-10 w-auto object-contain"
           />
         </Link>
 
@@ -156,6 +147,13 @@ function Header() {
                 {item.label}
               </Link>
             ))}
+            <Link
+              to="/contact"
+              onClick={() => setOpen(false)}
+              className="rounded-lg bg-primary px-3 py-2 text-center text-sm font-semibold text-primary-foreground"
+            >
+              Get a Quote
+            </Link>
             <a
               href={`tel:${PHONES[0].tel}`}
               className="rounded-md px-3 py-2 text-sm font-semibold text-primary"
@@ -176,11 +174,9 @@ function Footer() {
         <div>
           <div className="inline-block rounded-md bg-background p-3">
             <img
-              src={logoAsset.url}
+              src="/namutek-logo.png"
               alt="Namutek Logistics Limited"
-              className="h-12 w-auto"
-              width={260}
-              height={96}
+              className="h-12 w-auto object-contain"
               loading="lazy"
             />
           </div>

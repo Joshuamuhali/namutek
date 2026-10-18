@@ -70,7 +70,6 @@ const HERO_SLIDES: HeroSlide[] = [
   },
   {
     id: "partner",
-    serviceHash: undefined,
     tag: "05 · One partner",
     title: "Four disciplines. One dependable team.",
     description:
@@ -204,12 +203,6 @@ export function HeroCarousel() {
             </div>
 
             <div className="flex items-center gap-2">
-              <Link
-                to="/track"
-                className="rounded-full border border-background/30 bg-background/10 px-4 py-2 text-xs font-semibold text-background backdrop-blur-sm transition hover:bg-background/20 sm:text-sm"
-              >
-                Track a request
-              </Link>
               <button
                 type="button"
                 aria-label="Previous slide"

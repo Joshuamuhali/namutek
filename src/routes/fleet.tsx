@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { FleetGallery } from "@/components/FleetGallery";
 import { CTABand } from "@/components/shared";
 import { Reveal } from "@/components/reveal";
 
@@ -138,6 +139,8 @@ function FleetPage() {
           </div>
         </div>
       </section>
+
+      <FleetGallery />
 
       <CTABand />
     </>

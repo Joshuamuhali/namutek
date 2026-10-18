@@ -2,7 +2,7 @@
 
 - [x] Upload brand logo as CDN asset
 - [x] Generate hero (transport) and civil works imagery
-- [x] Enable Lovable Cloud & Supabase database integration
+- [x] Enable Supabase database integration
 - [x] quote_requests table migration (anon insert only)
 - [x] Design tokens + fonts (red/black industrial, Bebas Neue + Barlow)
 - [x] Favicon from logo; root layout with header/footer + fonts
