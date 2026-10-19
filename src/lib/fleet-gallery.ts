@@ -5,6 +5,15 @@ export interface FleetGalleryImage {
   caption: string;
 }
 
+export function publicAssetPath(src: string) {
+  const normalized = src.replace(/^\/+/, "");
+  return `/${normalized
+    .split("/")
+    .filter(Boolean)
+    .map((segment) => encodeURIComponent(segment))
+    .join("/")}`;
+}
+
 export const FLEET_GALLERY_IMAGES: FleetGalleryImage[] = [
   {
     id: "fleet-01",

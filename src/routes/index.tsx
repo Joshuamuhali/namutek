@@ -4,24 +4,6 @@ import { CTABand } from "@/components/shared";
 import { Reveal } from "@/components/reveal";
 
 export const Route = createFileRoute("/")({
-  head: () => ({
-    meta: [
-      {
-        title: "Namutek Logistics Limited — Freight, Haulage & Construction in Zambia",
-      },
-      {
-        name: "description",
-        content:
-          "Dependable freight transportation, heavy-duty haulage, logistics, building construction and civil works across Zambia and regional routes. Request a quote today.",
-      },
-      { property: "og:title", content: "Namutek Logistics Limited — Freight, Haulage & Construction in Zambia" },
-      {
-        property: "og:description",
-        content:
-          "Dependable freight transportation, heavy-duty haulage, logistics and construction services across Zambia. Request a quote today.",
-      },
-    ],
-  }),
   component: Index,
 });
 

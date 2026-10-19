@@ -3,22 +3,6 @@ import { CTABand } from "@/components/shared";
 import { Reveal } from "@/components/reveal";
 
 export const Route = createFileRoute("/about")({
-  head: () => ({
-    meta: [
-      { title: "About Us — Namutek Logistics Limited" },
-      {
-        name: "description",
-        content:
-          "Namutek Logistics Limited is a Zambian company providing transportation, logistics and construction services. Established 2018, based in Foxdale, Lusaka.",
-      },
-      { property: "og:title", content: "About Us — Namutek Logistics Limited" },
-      {
-        property: "og:description",
-        content:
-          "A Zambian transportation, logistics and construction company built on integrity, accountability and professionalism.",
-      },
-    ],
-  }),
   component: AboutPage,
 });
 

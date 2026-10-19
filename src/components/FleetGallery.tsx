@@ -1,14 +1,16 @@
 import { useCallback, useEffect, useId, useRef, useState } from "react";
 import { Download, Heart, X } from "lucide-react";
 
+import { Reveal } from "@/components/reveal";
 import {
   FLEET_GALLERY_BATCH_SIZE,
   FLEET_GALLERY_IMAGES,
+  publicAssetPath,
   type FleetGalleryImage,
 } from "@/lib/fleet-gallery";
 
 function assetUrl(src: string) {
-  return encodeURI(src);
+  return publicAssetPath(src);
 }
 
 function downloadName(image: FleetGalleryImage) {
@@ -136,53 +138,63 @@ export function FleetGallery() {
   return (
     <section className="bg-background">
       <div className="mx-auto max-w-6xl px-4 py-16 md:py-20">
-        <p className="text-sm font-bold uppercase tracking-[0.25em] text-primary">Photography</p>
-        <h2 className="mt-2 text-3xl text-foreground md:text-5xl">Our Fleet in Action</h2>
-        <p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted-foreground md:text-base">
-          Trucks, trailers and site equipment used on Namutek transport and construction assignments.
-        </p>
+        <Reveal>
+          <p className="text-sm font-bold uppercase tracking-[0.25em] text-primary">Photography</p>
+          <h2 className="mt-2 text-3xl text-foreground md:text-5xl">Our Fleet in Action</h2>
+          <p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted-foreground md:text-base">
+            Trucks, trailers and site equipment used on Namutek transport and construction
+            assignments.
+          </p>
+        </Reveal>
 
         {FLEET_GALLERY_IMAGES.length === 0 ? (
-          <p className="mt-8 text-sm text-muted-foreground">No fleet photographs are available yet.</p>
+          <p className="mt-8 text-sm text-muted-foreground">
+            No fleet photographs are available yet.
+          </p>
         ) : (
           <>
-            <div
-              className="mt-8 grid w-full grid-cols-6 gap-1 sm:gap-1.5"
-              style={{ gridTemplateColumns: "repeat(6, minmax(0, 1fr))" }}
-            >
-              {visibleImages.map((image, index) => {
-                const state = likeState(image.id);
-                return (
-                  <button
-                    key={image.id}
-                    type="button"
-                    onClick={() => setViewerIndex(index)}
-                    className="group relative min-w-0 overflow-hidden bg-muted aspect-square focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                    aria-label={`Open ${image.alt}`}
-                  >
-                    {broken[image.id] ? (
-                      <span className="flex h-full items-center justify-center px-1 text-center text-[10px] text-muted-foreground">
-                        Image unavailable
+            <Reveal delay={0.08}>
+              <div
+                className="mt-8 grid w-full grid-cols-6 gap-1 sm:gap-1.5"
+                style={{ gridTemplateColumns: "repeat(6, minmax(0, 1fr))" }}
+              >
+                {visibleImages.map((image, index) => {
+                  const state = likeState(image.id);
+                  return (
+                    <button
+                      key={image.id}
+                      type="button"
+                      onClick={() => setViewerIndex(index)}
+                      className="group relative min-w-0 overflow-hidden bg-muted aspect-square focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                      aria-label={`Open ${image.alt}`}
+                    >
+                      {broken[image.id] ? (
+                        <span className="flex h-full items-center justify-center px-1 text-center text-[10px] text-muted-foreground">
+                          Image unavailable
+                        </span>
+                      ) : (
+                        <img
+                          src={assetUrl(image.src)}
+                          alt={image.alt}
+                          className="block h-full w-full object-cover object-center"
+                          loading={index < 12 ? "eager" : "lazy"}
+                          onError={() => setBroken((current) => ({ ...current, [image.id]: true }))}
+                        />
+                      )}
+                      <span className="pointer-events-none absolute inset-0 hidden items-end bg-foreground/25 p-1.5 text-left text-[10px] leading-tight text-background opacity-0 transition group-hover:opacity-100 md:flex">
+                        {image.caption}
                       </span>
-                    ) : (
-                      <img
-                        src={assetUrl(image.src)}
-                        alt={image.alt}
-                        className="block h-full w-full object-cover object-center"
-                        loading={index < 12 ? "eager" : "lazy"}
-                        onError={() => setBroken((current) => ({ ...current, [image.id]: true }))}
-                      />
-                    )}
-                    <span className="pointer-events-none absolute inset-0 hidden items-end bg-foreground/25 p-1.5 text-left text-[10px] leading-tight text-background opacity-0 transition group-hover:opacity-100 md:flex">
-                      {image.caption}
-                    </span>
-                    {state.liked ? (
-                      <Heart className="absolute right-1 top-1 h-3 w-3 fill-primary text-primary" aria-hidden />
-                    ) : null}
-                  </button>
-                );
-              })}
-            </div>
+                      {state.liked ? (
+                        <Heart
+                          className="absolute right-1 top-1 h-3 w-3 fill-primary text-primary"
+                          aria-hidden
+                        />
+                      ) : null}
+                    </button>
+                  );
+                })}
+              </div>
+            </Reveal>
             <div ref={sentinelRef} className="h-8" aria-hidden="true" />
             <p id={liveRegionId} className="sr-only" aria-live="polite">
               {loadingMore
@@ -199,10 +211,6 @@ export function FleetGallery() {
                 End of gallery · {FLEET_GALLERY_IMAGES.length} photographs
               </p>
             ) : null}
-            <p className="mt-4 text-xs text-muted-foreground">
-              Likes are simulated on this device only and reset when the page is refreshed. Comments are
-              read-only and are not collected.
-            </p>
           </>
         )}
       </div>

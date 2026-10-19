@@ -4,22 +4,6 @@ import { CTABand, PHONES, PhoneLinks } from "@/components/shared";
 import { Reveal } from "@/components/reveal";
 
 export const Route = createFileRoute("/contact")({
-  head: () => ({
-    meta: [
-      { title: "Contact & Request a Quote — Namutek Logistics Limited" },
-      {
-        name: "description",
-        content:
-          "Request a quote for freight, haulage, logistics or construction services. Call +260 966 445513 or +260 976 699145. Foxdale, Lusaka, Zambia.",
-      },
-      { property: "og:title", content: "Contact & Request a Quote — Namutek Logistics Limited" },
-      {
-        property: "og:description",
-        content:
-          "Request a quote for freight, haulage, logistics or construction services across Zambia.",
-      },
-    ],
-  }),
   component: ContactPage,
 });
 
@@ -95,6 +79,9 @@ function EnquiryForm() {
       const value = String(form.get(`extra_${key}`) ?? "").trim();
       if (value) extra[key] = value;
     }
+    const extraDetails = SERVICES[serviceType].extras.flatMap(({ key, label }) =>
+      extra[key] ? [`${label}: ${extra[key]}`] : [],
+    );
     const originValue = String(form.get("origin") ?? "").trim();
     const destinationValue = String(form.get("destination") ?? "").trim();
     const contactNameValue = String(form.get("contactName") ?? "");
@@ -109,6 +96,7 @@ function EnquiryForm() {
       destination: string;
       contactName: string;
       phone: string;
+      extraDetails: string[];
       projectDetails: string;
       companyName?: string;
       email?: string;
@@ -118,6 +106,7 @@ function EnquiryForm() {
       destination: destinationValue,
       contactName: contactNameValue,
       phone: phoneValue,
+      extraDetails,
       projectDetails: projectDetailsValue,
     };
     if (companyNameValue) {

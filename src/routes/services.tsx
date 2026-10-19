@@ -4,22 +4,6 @@ import { CTABand } from "@/components/shared";
 import { Reveal } from "@/components/reveal";
 
 export const Route = createFileRoute("/services")({
-  head: () => ({
-    meta: [
-      { title: "Our Services — Namutek Logistics Limited" },
-      {
-        name: "description",
-        content:
-          "Freight transportation, heavy-duty haulage, logistics coordination, building construction and civil infrastructure services across Zambia and regional routes.",
-      },
-      { property: "og:title", content: "Our Services — Namutek Logistics Limited" },
-      {
-        property: "og:description",
-        content:
-          "Transportation, logistics, building construction and civil infrastructure services across Zambia and regional routes.",
-      },
-    ],
-  }),
   component: ServicesPage,
 });
 

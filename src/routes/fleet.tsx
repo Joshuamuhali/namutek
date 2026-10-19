@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { Building2, Factory, Globe2, HardHat, PackageCheck } from "lucide-react";
 import { FleetGallery } from "@/components/FleetGallery";
 import { CTABand } from "@/components/shared";
 import { Reveal } from "@/components/reveal";
@@ -36,22 +37,27 @@ const SECTORS = [
   {
     name: "Mining & Industrial",
     support: "Freight and haulage of materials, equipment and industrial goods.",
+    icon: Factory,
   },
   {
     name: "Construction & Infrastructure",
     support: "Transport of construction materials, site services, civil and building works.",
+    icon: HardHat,
   },
   {
     name: "Commercial & Distribution",
     support: "Domestic distribution, final-mile delivery and ongoing supply requirements.",
+    icon: PackageCheck,
   },
   {
     name: "Institutional Projects",
     support: "Construction and refurbishment of office and institutional buildings.",
+    icon: Building2,
   },
   {
     name: "Regional Trade",
     support: "Cross-border and regional transportation on selected routes.",
+    icon: Globe2,
   },
 ];
 
@@ -59,18 +65,20 @@ function FleetPage() {
   return (
     <>
       <section className="bg-foreground">
-        <div className="mx-auto max-w-6xl px-4 py-16">
-          <p className="text-sm font-bold uppercase tracking-[0.25em] text-primary">
-            Fleet & Equipment
-          </p>
-          <h1 className="mt-2 text-4xl text-background md:text-5xl">
-            Ready for dispatch, ready for site
-          </h1>
-          <p className="mt-4 max-w-2xl text-background/80">
-            Our fleet and plant support transport, haulage and construction
-            assignments across Zambia and selected regional routes.
-          </p>
-        </div>
+        <Reveal>
+          <div className="mx-auto max-w-6xl px-4 py-16">
+            <p className="text-sm font-bold uppercase tracking-[0.25em] text-primary">
+              Fleet & Equipment
+            </p>
+            <h1 className="mt-2 text-4xl text-background md:text-5xl">
+              Ready for dispatch, ready for site
+            </h1>
+            <p className="mt-4 max-w-2xl text-background/80">
+              Our fleet and plant support transport, haulage and construction
+              assignments across Zambia and selected regional routes.
+            </p>
+          </div>
+        </Reveal>
       </section>
 
       <section className="mx-auto max-w-6xl px-4 py-20">
@@ -125,15 +133,18 @@ function FleetPage() {
               Clients whose operations depend on dependable movement
             </h2>
           </Reveal>
-          <div className="mt-10 divide-y divide-border overflow-hidden rounded-lg border border-border bg-card">
+          <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {SECTORS.map((s, i) => (
               <Reveal key={s.name} delay={i * 0.05}>
-                <div className="grid gap-1 p-6 md:grid-cols-3 md:gap-6">
-                  <p className="font-bold uppercase tracking-wide text-primary">{s.name}</p>
-                  <p className="text-sm leading-relaxed text-muted-foreground md:col-span-2">
+                <article className="group h-full rounded-xl border border-border bg-card p-6 shadow-sm transition duration-200 hover:-translate-y-1 hover:border-primary/40 hover:shadow-md">
+                  <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
+                    <s.icon className="h-6 w-6" aria-hidden="true" />
+                  </div>
+                  <h3 className="text-lg font-bold text-foreground">{s.name}</h3>
+                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
                     {s.support}
                   </p>
-                </div>
+                </article>
               </Reveal>
             ))}
           </div>

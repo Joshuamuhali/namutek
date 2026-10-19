@@ -1,4 +1,4 @@
-import { motion, type Variants } from "framer-motion";
+import { motion, useReducedMotion, type Variants } from "framer-motion";
 import type { ReactNode } from "react";
 
 const variants: Variants = {
@@ -15,14 +15,16 @@ export function Reveal({
   delay?: number;
   className?: string;
 }) {
+  const shouldReduceMotion = useReducedMotion();
+
   return (
     <motion.div
       className={className}
-      initial="hidden"
+      initial={shouldReduceMotion ? false : "hidden"}
       whileInView="visible"
-      viewport={{ once: true, margin: "-60px" }}
+      viewport={{ once: true, amount: 0.15, margin: "-40px" }}
       variants={variants}
-      transition={{ duration: 0.55, ease: "easeOut", delay }}
+      transition={{ duration: shouldReduceMotion ? 0 : 0.55, ease: "easeOut", delay }}
     >
       {children}
     </motion.div>

@@ -1,15 +1,12 @@
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
   Outlet,
   Link,
-  createRootRouteWithContext,
+  createRootRoute,
   useRouter,
-  HeadContent,
-  Scripts,
+  useRouterState,
 } from "@tanstack/react-router";
-import { useState, type ReactNode } from "react";
+import { useEffect, useState } from "react";
 
-import appCss from "../styles.css?url";
 import { SiteStructuredData } from "@/components/StructuredData";
 import { PHONES } from "@/components/shared";
 import { DESIGNER, SITE_ORIGIN } from "@/lib/site-metadata";
@@ -21,6 +18,40 @@ const NAV = [
   { to: "/about", label: "About" },
   { to: "/contact", label: "Contact" },
 ] as const;
+
+const DEFAULT_PAGE_METADATA = {
+  title: "Namutek Logistics Limited — Freight, Haulage & Construction in Zambia",
+  description:
+    "Dependable freight transportation, heavy-duty haulage, logistics, building construction and civil works across Zambia and regional routes. Request a quote today.",
+};
+
+const PAGE_METADATA: Record<string, typeof DEFAULT_PAGE_METADATA> = {
+  "/": DEFAULT_PAGE_METADATA,
+  "/about": {
+    title: "About Us — Namutek Logistics Limited",
+    description:
+      "Namutek Logistics Limited is a Zambian company providing transportation, logistics and construction services. Established 2018, based in Foxdale, Lusaka.",
+  },
+  "/services": {
+    title: "Our Services — Namutek Logistics Limited",
+    description:
+      "Freight transportation, heavy-duty haulage, logistics coordination, building construction and civil infrastructure services across Zambia and regional routes.",
+  },
+  "/fleet": {
+    title: "Fleet & Sectors We Serve — Namutek Logistics Limited",
+    description:
+      "Prime movers, flatbed and tanker trailers, tipper trucks, excavators and construction plant — serving mining, construction, distribution and regional trade across Zambia.",
+  },
+  "/contact": {
+    title: "Contact & Request a Quote — Namutek Logistics Limited",
+    description:
+      "Request a quote for freight, haulage, logistics or construction services. Call +260 966 445513 or +260 976 699145. Foxdale, Lusaka, Zambia.",
+  },
+  "/credits": {
+    title: `Website Design — ${DESIGNER.name} | Namutek Logistics Limited`,
+    description: `${DESIGNER.name} designed and developed the Namutek Logistics Limited website — freight, haulage, logistics and construction services in Zambia.`,
+  },
+};
 
 function NotFoundComponent() {
   return (
@@ -84,12 +115,12 @@ function Header() {
 
   return (
     <header className="sticky top-0 z-50 border-b border-border/80 bg-background/90 shadow-sm shadow-foreground/5 backdrop-blur-md">
-      <div className="mx-auto flex h-[4.25rem] max-w-6xl items-center justify-between gap-4 px-4">
+      <div className="mx-auto flex h-20 max-w-6xl items-center justify-between gap-4 px-4">
         <Link to="/" className="flex items-center" aria-label="Namutek Logistics home">
           <img
-            src="/namutek-logo.png"
+            src="/logo.png"
             alt="Namutek Logistics Limited"
-            className="h-10 w-auto object-contain"
+            className="h-[4.25rem] w-auto object-contain"
           />
         </Link>
 
@@ -174,7 +205,7 @@ function Footer() {
         <div>
           <div className="inline-block rounded-md bg-background p-3">
             <img
-              src="/namutek-logo.png"
+              src="/logo.png"
               alt="Namutek Logistics Limited"
               className="h-12 w-auto object-contain"
               loading="lazy"
@@ -245,62 +276,34 @@ function Footer() {
   );
 }
 
-export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
-  head: () => ({
-    meta: [
-      { charSet: "utf-8" },
-      { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Namutek Logistics Limited" },
-      {
-        name: "description",
-        content:
-          "Transportation, logistics and construction services in Zambia. Freight, haulage, building construction and civil works.",
-      },
-      { property: "og:type", content: "website" },
-      { property: "og:url", content: `${SITE_ORIGIN}/` },
-      { name: "twitter:card", content: "summary_large_image" },
-      { name: "author", content: DESIGNER.name },
-      { name: "designer", content: DESIGNER.name },
-      { name: "robots", content: "index, follow" },
-    ],
-    links: [
-      { rel: "canonical", href: `${SITE_ORIGIN}/` },
-      { rel: "preconnect", href: "https://fonts.googleapis.com" },
-      { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
-      {
-        rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap",
-      },
-      { rel: "stylesheet", href: appCss },
-      { rel: "icon", type: "image/png", href: "/favicon.png" },
-    ],
-  }),
-  shellComponent: RootShell,
+export const Route = createRootRoute({
   component: RootComponent,
   notFoundComponent: NotFoundComponent,
   errorComponent: ErrorComponent,
 });
 
-function RootShell({ children }: { children: ReactNode }) {
-  return (
-    <html lang="en">
-      <head>
-        <HeadContent />
-      </head>
-      <body>
-        <SiteStructuredData />
-        {children}
-        <Scripts />
-      </body>
-    </html>
-  );
-}
-
 function RootComponent() {
-  const { queryClient } = Route.useRouteContext();
+  const pathname = useRouterState({ select: (state) => state.location.pathname });
+  const metadata = PAGE_METADATA[pathname] ?? DEFAULT_PAGE_METADATA;
+
+  useEffect(() => {
+    document.title = metadata.title;
+    document.querySelector('meta[name="description"]')?.setAttribute("content", metadata.description);
+    document.querySelector('meta[property="og:title"]')?.setAttribute("content", metadata.title);
+    document
+      .querySelector('meta[property="og:description"]')
+      ?.setAttribute("content", metadata.description);
+    document
+      .querySelector('link[rel="canonical"]')
+      ?.setAttribute("href", `${SITE_ORIGIN}${pathname}`);
+    document
+      .querySelector('meta[property="og:url"]')
+      ?.setAttribute("content", `${SITE_ORIGIN}${pathname}`);
+  }, [metadata, pathname]);
 
   return (
-    <QueryClientProvider client={queryClient}>
+    <>
+      <SiteStructuredData />
       <div className="flex min-h-screen flex-col">
         <Header />
         <main className="flex-1">
@@ -308,6 +311,6 @@ function RootComponent() {
         </main>
         <Footer />
       </div>
-    </QueryClientProvider>
+    </>
   );
 }

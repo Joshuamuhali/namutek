@@ -3,33 +3,6 @@ import { Reveal } from "@/components/reveal";
 import { DESIGNER, SITE_NAME } from "@/lib/site-metadata";
 
 export const Route = createFileRoute("/credits")({
-  head: () => ({
-    meta: [
-      {
-        title: `Website Design — ${DESIGNER.name} | ${SITE_NAME}`,
-      },
-      {
-        name: "description",
-        content: `${DESIGNER.name} designed and developed the ${SITE_NAME} website — freight, haulage, logistics and construction services in Zambia.`,
-      },
-      {
-        name: "author",
-        content: DESIGNER.name,
-      },
-      {
-        name: "robots",
-        content: "index, follow",
-      },
-      {
-        property: "og:title",
-        content: `Website Design — ${DESIGNER.name}`,
-      },
-      {
-        property: "og:description",
-        content: `Official website design credit for ${SITE_NAME}. Designed by ${DESIGNER.name}.`,
-      },
-    ],
-  }),
   component: CreditsPage,
 });
 
