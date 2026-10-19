@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useId, useRef, useState } from "react";
-import { Download, Heart, X } from "lucide-react";
+import { useCallback, useEffect, useId, useRef, useState, type FormEvent } from "react";
+import { Download, Heart, MessageCircle, Send, X } from "lucide-react";
 
 import { Reveal } from "@/components/reveal";
 import {
@@ -18,6 +18,55 @@ function downloadName(image: FleetGalleryImage) {
   return `namutek-fleet-${image.id}.${ext}`;
 }
 
+const SAMPLE_COMMENTS = [
+  {
+    name: "Amina K.",
+    country: "Zambia",
+    text: "A strong fleet makes a big difference to every project.",
+  },
+  {
+    name: "Thabo M.",
+    country: "South Africa",
+    text: "Great to see logistics and construction working side by side.",
+  },
+  { name: "Nia O.", country: "Kenya", text: "Keeping businesses and communities connected." },
+  {
+    name: "Kofi A.",
+    country: "Ghana",
+    text: "The right equipment helps keep important work moving.",
+  },
+  { name: "Amara D.", country: "Nigeria", text: "A professional fleet ready for demanding jobs." },
+  {
+    name: "Musa B.",
+    country: "Tanzania",
+    text: "Reliable transport is at the heart of every successful delivery.",
+  },
+  {
+    name: "Lerato P.",
+    country: "Botswana",
+    text: "Impressive capability for projects across the region.",
+  },
+  {
+    name: "Daniel R.",
+    country: "United Kingdom",
+    text: "A well-presented fleet and a clear focus on service.",
+  },
+  {
+    name: "Sofia L.",
+    country: "Portugal",
+    text: "Moving materials safely is what keeps projects on schedule.",
+  },
+  {
+    name: "Raj S.",
+    country: "India",
+    text: "Good equipment and coordination make all the difference.",
+  },
+] as const;
+
+function sampleLikeCount(imageIndex: number) {
+  return 128 + imageIndex * 17;
+}
+
 export function FleetGallery() {
   const [visibleCount, setVisibleCount] = useState(() =>
     Math.min(FLEET_GALLERY_BATCH_SIZE, FLEET_GALLERY_IMAGES.length),
@@ -25,6 +74,8 @@ export function FleetGallery() {
   const [loadingMore, setLoadingMore] = useState(false);
   const [viewerIndex, setViewerIndex] = useState<number | null>(null);
   const [likes, setLikes] = useState<Record<string, { liked: boolean; count: number }>>({});
+  const [commentDraft, setCommentDraft] = useState("");
+  const [commentError, setCommentError] = useState("");
   const [broken, setBroken] = useState<Record<string, boolean>>({});
   const loadingLock = useRef(false);
   const sentinelRef = useRef<HTMLDivElement | null>(null);
@@ -101,7 +152,8 @@ export function FleetGallery() {
   }, [viewerIndex]);
 
   function likeState(id: string) {
-    return likes[id] ?? { liked: false, count: 0 };
+    const imageIndex = FLEET_GALLERY_IMAGES.findIndex((image) => image.id === id);
+    return likes[id] ?? { liked: false, count: sampleLikeCount(Math.max(0, imageIndex)) };
   }
 
   function toggleLike(id: string) {
@@ -113,6 +165,13 @@ export function FleetGallery() {
         [id]: { liked, count: Math.max(0, previous.count + (liked ? 1 : -1)) },
       };
     });
+  }
+
+  function submitComment(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setCommentError(
+      "Comments aren't available yet. Account creation and comment storage are coming soon, so your comment wasn't posted.",
+    );
   }
 
   async function downloadImage(image: FleetGalleryImage) {
@@ -280,34 +339,114 @@ export function FleetGallery() {
               </button>
             </div>
 
-            <div className="max-h-[32vh] overflow-y-auto rounded-md bg-background p-4 text-foreground">
+            <div className="max-h-[45vh] overflow-y-auto rounded-xl bg-background p-4 text-foreground sm:p-5">
               <p id="fleet-gallery-caption" className="text-sm leading-relaxed">
                 {activeImage.caption}
               </p>
-              <div className="mt-3 flex flex-wrap items-center gap-3">
+              <div className="mt-4 flex flex-wrap items-center gap-3">
                 <button
                   type="button"
                   onClick={() => toggleLike(activeImage.id)}
-                  className="inline-flex items-center gap-2 rounded-md border border-border px-3 py-1.5 text-sm font-semibold hover:bg-muted"
+                  className="inline-flex items-center gap-2 rounded-full border border-border px-4 py-2 text-sm font-semibold transition hover:border-primary/50 hover:bg-primary/5"
                   aria-pressed={likeState(activeImage.id).liked}
-                  aria-label="Toggle simulated like"
+                  aria-label={
+                    likeState(activeImage.id).liked ? "Unlike this photo" : "Like this photo"
+                  }
                 >
                   <Heart
-                    className={`h-4 w-4 ${likeState(activeImage.id).liked ? "fill-primary text-primary" : ""}`}
+                    className={`h-4 w-4 ${
+                      likeState(activeImage.id).liked ? "fill-primary text-primary" : ""
+                    }`}
                     aria-hidden
                   />
-                  {likeState(activeImage.id).count} simulated likes
+                  {likeState(activeImage.id).count} sample likes
                 </button>
               </div>
-              <div className="mt-4 border-t border-border pt-3">
-                <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                  Comments
-                </p>
-                <p className="mt-2 text-sm text-muted-foreground">No comments available.</p>
-                <p className="mt-1 text-xs text-muted-foreground">
-                  Comments are demonstration-only and cannot be submitted on this website.
-                </p>
-              </div>
+              <section
+                className="mt-5 border-t border-border pt-5"
+                aria-labelledby="gallery-comments-title"
+              >
+                <div className="flex items-center gap-2">
+                  <MessageCircle className="h-4 w-4 text-primary" aria-hidden="true" />
+                  <h3 id="gallery-comments-title" className="text-sm font-bold text-foreground">
+                    Community comments
+                  </h3>
+                </div>
+
+                <ul className="mt-4 space-y-4">
+                  {SAMPLE_COMMENTS.map((comment) => (
+                    <li key={comment.name} className="flex items-start gap-3">
+                      <span
+                        className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-bold text-primary"
+                        aria-hidden="true"
+                      >
+                        {comment.name
+                          .split(" ")
+                          .map((part) => part[0])
+                          .join("")}
+                      </span>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-xs text-muted-foreground">
+                          <span className="font-bold text-foreground">{comment.name}</span>
+                          <span aria-hidden="true"> · </span>
+                          {comment.country}
+                        </p>
+                        <p className="mt-1 text-sm leading-relaxed text-foreground">
+                          {comment.text}
+                        </p>
+                      </div>
+                      <Heart
+                        className="mt-1 h-3.5 w-3.5 shrink-0 text-muted-foreground"
+                        aria-hidden="true"
+                      />
+                    </li>
+                  ))}
+                </ul>
+                <div className="mt-4 rounded-xl border border-border bg-muted/40 p-4">
+                  <p className="text-sm font-semibold text-foreground">Start the conversation</p>
+                  <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+                    Share a note about this fleet photo. Comment posting is coming soon.
+                  </p>
+                  <form onSubmit={submitComment} className="mt-4">
+                    <label htmlFor="fleet-photo-comment" className="sr-only">
+                      Your comment
+                    </label>
+                    <textarea
+                      id="fleet-photo-comment"
+                      value={commentDraft}
+                      onChange={(event) => {
+                        setCommentDraft(event.target.value);
+                        setCommentError("");
+                      }}
+                      rows={3}
+                      maxLength={500}
+                      required
+                      placeholder="Write a comment..."
+                      className="w-full resize-y rounded-lg border border-border bg-background px-3 py-2.5 text-sm text-foreground outline-none transition placeholder:text-muted-foreground focus:border-primary focus:ring-4 focus:ring-primary/10"
+                    />
+                    <div className="mt-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                      <p className="text-xs text-muted-foreground">
+                        {commentDraft.length}/500 characters
+                      </p>
+                      <button
+                        type="submit"
+                        className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground transition hover:bg-primary/90"
+                      >
+                        Post comment
+                        <Send className="h-3.5 w-3.5" aria-hidden="true" />
+                      </button>
+                    </div>
+                    {commentError ? (
+                      <p
+                        className="mt-3 rounded-lg border border-destructive/20 bg-destructive/5 px-3 py-2.5 text-sm leading-relaxed text-destructive"
+                        role="alert"
+                      >
+                        {commentError}
+                      </p>
+                    ) : null}
+                  </form>
+                </div>
+              </section>
             </div>
           </div>
         </div>
